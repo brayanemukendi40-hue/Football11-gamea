@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Ultimate Football</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0b6623;
+  color: white;
+  text-align: center;
+}
+
+/* SPLASH */
+#splash {
+  position: fixed;
+  inset: 0;
+  background: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#splash h1 {
+  font-size: 36px;
+  color: gold;
+}
+
+#splash p {
+  color: #ccc;
+}
+
+/* MENU + GAME */
+#menu, #game {
+  display: none;
+}
+
+button {
+  padding: 14px;
+  font-size: 18px;
+  border-radius: 10px;
+  border: none;
+  margin: 10px;
+}
+
+canvas {
+  background: #1e8f3a;
+  display: block;
+  margin: auto;
+}
+
+input {
+  padding: 10px;
+  font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <h1>YAMAL STUDIOS</h1>
+  <p>Football Engine © 2026</p>
+</div>
+
+<!-- MENU -->
+<div id="menu">
+  <h1>CRÉE TON CLUB ⚽</h1>
+  <input id="clubName" placeholder="Nom du club"><br><br>
+  <button onclick="startGame()">MATCH 11 VS 11</button>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <h2 id="clubTitle"></h2>
+  <canvas id="field" width="360" height="600"></canvas><br>
+  <button onclick="shoot()">TIR</button>
+</div>
+
+<script>
+/* SPLASH TIMER */
+setTimeout(()=>{
+  document.getElementById("splash").style.display="none";
+  document.getElementById("menu").style.display="block";
+},3000);
+
+/* GAME LOGIC */
+let canvas = document.getElementById("field");
+let ctx = canvas.getContext("2d");
+
+let player = { x:180, y:500, r:10 };
+let ball = { x:180, y:480, vx:0, vy:0 };
+let enemies = [];
+
+for(let i=0;i<11;i++){
+  enemies.push({x:Math.random()*360,y:Math.random()*200});
+}
+
+function startGame(){
+  let name = document.getElementById("clubName").value;
+  if(name===""){ alert("Entre un nom de club"); return; }
+  document.getElementById("clubTitle").innerText = name + " vs FC Nova";
+  document.getElementById("menu").style.display="none";
+  document.getElementById("game").style.display="block";
+  requestAnimationFrame(update);
+}
+
+function shoot(){
+  ball.vy = -7;
+}
+
+document.addEventListener("touchmove", e=>{
+  let t = e.touches[0];
+  player.x = t.clientX * canvas.width / window.innerWidth;
+  player.y = t.clientY * canvas.height / window.innerHeight;
+});
+
+function update(){
+  ctx.clearRect(0,0,360,600);
+
+  ctx.fillStyle="blue";
+  ctx.beginPath();
+  ctx.arc(player.x,player.y,player.r,0,Math.PI*2);
+  ctx.fill();
+
+  ball.y += ball.vy;
+  ball.vy *= 0.97;
+
+  ctx.fillStyle="white";
+  ctx.beginPath();
+  ctx.arc(ball.x,ball.y,6,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle="red";
+  enemies.forEach(e=>{
+    e.y += 0.3;
+    ctx.beginPath();
+    ctx.arc(e.x,e.y,8,0,Math.PI*2);
+    ctx.fill();
+  });
+
+  requestAnimationFrame(update);
+}
+</script>
+
+</body>
+</html
